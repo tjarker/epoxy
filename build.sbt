@@ -1,17 +1,28 @@
 // epoxy is built once per Chisel compatibility group (see project/ChiselGroup.scala).
 // Every group compiles the same sources from src/; the root project only aggregates them.
 
+// The version comes from the latest git tag (sbt-ci-release, see RELEASING.md).
 ThisBuild / organization := "io.github.tjarker"
-ThisBuild / version := "0.1.0-SNAPSHOT"
+ThisBuild / homepage := Some(url("https://github.com/tjarker/epoxy"))
+ThisBuild / licenses := List("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0"))
+ThisBuild / developers := List(
+  Developer("tjarker", "Tjark Petersen", "tjark-petersen@gmx.de", url("https://github.com/tjarker"))
+)
+ThisBuild / scmInfo := Some(
+  ScmInfo(url("https://github.com/tjarker/epoxy"), "scm:git:https://github.com/tjarker/epoxy.git")
+)
+ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked")
 
 def sourceDirs(root: File, scope: String, group: ChiselGroup): Seq[File] =
   Seq(root / "src" / scope / "scala", root / "src" / scope / s"scala-${group.sourceSuffix}")
 
-def groupProject(group: ChiselGroup): Project =
+def groupProject(baseGroup: ChiselGroup): Project = {
+  val group = baseGroup.fromEnvironment
   Project(group.projectId, file("builds") / group.projectId)
     .settings(
       name := s"epoxy-${group.projectId}",
+      description := s"Chisel interface definitions and the IP that connects them, for Chisel ${group.releases}",
       scalaVersion := group.scalaVersion,
       libraryDependencies ++= Seq(
         group.dependency,
@@ -23,6 +34,7 @@ def groupProject(group: ChiselGroup): Project =
       Test / fork := true,
       Test / run / fork := true,
     )
+}
 
 lazy val chisel35 = groupProject(ChiselGroup.chisel35)
 lazy val chisel36 = groupProject(ChiselGroup.chisel36)

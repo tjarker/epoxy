@@ -25,6 +25,21 @@ case class ChiselGroup(
   /** Suffix of the source folders holding code that differs between Chisel 3 and Chisel 5+. */
   def sourceSuffix: String = if (isChisel3) "chisel3" else "chisel5plus"
 
+  /** The releases of the group, such as "3.5.x" or "7.x". */
+  def releases: String = version.split('.').take(if (isChisel3) 2 else 1).mkString("", ".", ".x")
+
+  /** This group with its Chisel and Scala version replaced by the environment variables
+    * `<PROJECTID>_CHISEL` and `<PROJECTID>_SCALA`, if set (for example `CHISEL7_CHISEL`). CI uses
+    * them to also test against the newest release of each group; releases never set them.
+    */
+  def fromEnvironment: ChiselGroup = {
+    val prefix = projectId.toUpperCase
+    copy(
+      version = sys.env.getOrElse(s"${prefix}_CHISEL", version),
+      scalaVersion = sys.env.getOrElse(s"${prefix}_SCALA", scalaVersion),
+    )
+  }
+
   def dependency: ModuleID = organization %% library % version
 
   def compilerPlugin: ModuleID =

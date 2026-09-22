@@ -3,6 +3,19 @@
 Chisel interface definitions and the IP that connects them, built for every Chisel version
 from 3.5 to 7.
 
+## Installation
+
+Pick the artifact for your Chisel version from the [table below](#chisel-versions):
+
+```scala
+// sbt
+libraryDependencies += "io.github.tjarker" %% "epoxy-chisel7" % "<version>"
+// Mill
+mvn"io.github.tjarker::epoxy-chisel7:<version>"
+```
+
+No version has been released yet; see [RELEASING.md](RELEASING.md).
+
 ## Contents
 
 | Package | What |
@@ -52,7 +65,8 @@ release so that it works with all of them.
 Each Scala version is the newest one the Chisel compiler plugin of the base version was
 published for. The groups are defined in [project/ChiselGroup.scala](project/ChiselGroup.scala).
 
-Nothing is published yet.
+CI also tests the Chisel 5, 6 and 7 groups against the newest release of each, every week and
+before every release.
 
 ## Development
 
